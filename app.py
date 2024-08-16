@@ -109,6 +109,50 @@ st.title("Product Pricing Strategy Recommendation")
 
 st.write(f"Model RMSE: {rmse:.2f}")
 
+# Raw Data Display
+st.subheader("Raw Data")
+st.write(data.head())
+
+# Units Sold Over Time
+st.subheader("Units Sold Over Time")
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.plot(data.index, data['units_sold'], label='Units Sold')
+ax.set_xlabel('Date')
+ax.set_ylabel('Units Sold')
+ax.set_title('Units Sold Over Time')
+st.pyplot(fig)
+
+# Feature Distributions
+st.subheader("Feature Distributions")
+features_to_plot = ['competitor_price', 'promotion', 'stock_level']
+fig, axs = plt.subplots(1, len(features_to_plot), figsize=(15, 5))
+
+for i, feature in enumerate(features_to_plot):
+    sns.histplot(data[feature], ax=axs[i])
+    axs[i].set_title(f'Distribution of {feature}')
+
+st.pyplot(fig)
+
+# Feature Correlation Heatmap
+st.subheader("Feature Correlation Heatmap")
+corr_matrix = data.corr()
+fig, ax = plt.subplots(figsize=(10, 8))
+sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', ax=ax)
+st.pyplot(fig)
+
+# Model Predictions vs Actuals
+st.subheader("Model Predictions vs Actuals")
+y_pred = rf_random.predict(X_test)
+
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.scatter(y_test, y_pred, alpha=0.5)
+ax.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', lw=2)
+ax.set_xlabel('Actual Units Sold')
+ax.set_ylabel('Predicted Units Sold')
+ax.set_title('Model Predictions vs Actuals')
+st.pyplot(fig)
+
+# User Inputs for Price Recommendation
 product_id = st.number_input("Product ID", min_value=1001, max_value=1050, step=1)
 store_location = st.selectbox("Store Location", ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix"])
 competitor_price = st.number_input("Competitor Price", min_value=0.0, step=0.01)
